@@ -13,7 +13,9 @@ func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	store := &FileSystemPlayerStore{database}
 
 	server := NewPlayerServer(store)
+
 	player := "Pepper"
+
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
 	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
