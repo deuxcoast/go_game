@@ -61,10 +61,10 @@ func AssertLeague(t testing.TB, got, want []Player) {
 	}
 }
 
-func AssertStatus(t testing.TB, got, want int) {
+func AssertStatus(t testing.TB, got *httptest.ResponseRecorder, want int) {
 	t.Helper()
-	if got != want {
-		t.Errorf("status is wrong, got status %d want status %d", got, want)
+	if got.Code != want {
+		t.Errorf("status is wrong, got status %d want status %d", got.Code, want)
 	}
 }
 
