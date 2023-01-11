@@ -26,6 +26,11 @@ func NewLeagueRequest() *http.Request {
 	return req
 }
 
+func NewGameRequest() *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "/game", nil)
+	return req
+}
+
 func GetLeagueFromResponse(t testing.TB, body io.Reader) (league []Player) {
 	t.Helper()
 
