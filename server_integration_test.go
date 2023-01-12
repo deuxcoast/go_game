@@ -1,53 +1,55 @@
-package poker
+package poker_test
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	poker "github.com/duexcoast/go_game"
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	// store := NewInMemoryPlayerStore()
 	database, cleanDatabase := createTempFile(t, `[]`)
 	defer cleanDatabase()
-	store, err := NewFileSystemPlayerStore(database)
-	AssertNoError(t, err)
+	store, err := poker.NewFileSystemPlayerStore(database)
+	poker.AssertNoError(t, err)
 
-	server, _ := NewPlayerServer(store)
+	server, _ := poker.NewPlayerServer(store, dummyGame)
 
 	player := "Pepper"
 
-	server.ServeHTTP(httptest.NewRecorder(), NewPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), NewPostWinRequest(player))
-	server.ServeHTTP(httptest.NewRecorder(), NewPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), poker.NewPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), poker.NewPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), poker.NewPostWinRequest(player))
 
 	t.Run("get score", func(t *testing.T) {
 		response := httptest.NewRecorder()
-		server.ServeHTTP(response, NewGetScoreRequest(player))
-		AssertStatus(t, response, http.StatusOK)
-		AssertResponseBody(t, response.Body.String(), "3")
+		server.ServeHTTP(response, poker.NewGetScoreRequest(player))
+		poker.AssertStatus(t, response, http.StatusOK)
+		poker.AssertResponseBody(t, response.Body.String(), "3")
 	})
 
 	t.Run("get league", func(t *testing.T) {
 		response := httptest.NewRecorder()
-		server.ServeHTTP(response, NewLeagueRequest())
-		AssertStatus(t, response, http.StatusOK)
+		server.ServeHTTP(response, poker.NewLeagueRequest())
+		poker.AssertStatus(t, response, http.StatusOK)
 
-		got := GetLeagueFromResponse(t, response.Body)
-		want := []Player{
+		got := poker.GetLeagueFromResponse(t, response.Body)
+		want := []poker.Player{
 			{"Pepper", 3},
 		}
 
-		AssertLeague(t, got, want)
+		poker.AssertLeague(t, got, want)
 	})
 
 	t.Run("works with an empty file", func(t *testing.T) {
 		database, cleanDatabase := createTempFile(t, "")
 		defer cleanDatabase()
 
-		_, err := NewFileSystemPlayerStore(database)
+		_, err := poker.NewFileSystemPlayerStore(database)
 
-		AssertNoError(t, err)
+		poker.AssertNoError(t, err)
 	})
 
 }

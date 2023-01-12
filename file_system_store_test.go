@@ -1,8 +1,10 @@
-package poker
+package poker_test
 
 import (
 	"os"
 	"testing"
+
+	poker "github.com/duexcoast/go_game"
 )
 
 func TestFileSystemStore(t *testing.T) {
@@ -13,13 +15,13 @@ func TestFileSystemStore(t *testing.T) {
 
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database)
-		AssertNoError(t, err)
+		store, err := poker.NewFileSystemPlayerStore(database)
+		poker.AssertNoError(t, err)
 
 		got := store.GetPlayerScore("Cleo")
 		want := 10
 
-		AssertScoreEquals(t, got, want)
+		poker.AssertScoreEquals(t, got, want)
 	})
 
 	t.Run("store win for existing players", func(t *testing.T) {
@@ -29,15 +31,15 @@ func TestFileSystemStore(t *testing.T) {
 
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database)
-		AssertNoError(t, err)
+		store, err := poker.NewFileSystemPlayerStore(database)
+		poker.AssertNoError(t, err)
 
 		store.RecordWin("Chris")
 
 		got := store.GetPlayerScore("Chris")
 
 		want := 34
-		AssertScoreEquals(t, got, want)
+		poker.AssertScoreEquals(t, got, want)
 	})
 
 	t.Run("store win for new players", func(t *testing.T) {
@@ -47,14 +49,14 @@ func TestFileSystemStore(t *testing.T) {
 
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database)
-		AssertNoError(t, err)
+		store, err := poker.NewFileSystemPlayerStore(database)
+		poker.AssertNoError(t, err)
 
 		store.RecordWin("Pepper")
 
 		got := store.GetPlayerScore("Pepper")
 		want := 1
-		AssertScoreEquals(t, got, want)
+		poker.AssertScoreEquals(t, got, want)
 	})
 
 	t.Run("league sorted", func(t *testing.T) {
@@ -64,20 +66,20 @@ func TestFileSystemStore(t *testing.T) {
 
 		defer cleanDatabase()
 
-		store, err := NewFileSystemPlayerStore(database)
-		AssertNoError(t, err)
+		store, err := poker.NewFileSystemPlayerStore(database)
+		poker.AssertNoError(t, err)
 
 		got := store.GetLeague()
-		want := []Player{
+		want := []poker.Player{
 			{"Chris", 33},
 			{"Cleo", 10},
 		}
 
-		AssertLeague(t, got, want)
+		poker.AssertLeague(t, got, want)
 
 		// read again
 		got = store.GetLeague()
-		AssertLeague(t, got, want)
+		poker.AssertLeague(t, got, want)
 	})
 }
 
