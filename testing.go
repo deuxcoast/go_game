@@ -126,6 +126,6 @@ func (s ScheduledAlert) String() string {
 	return fmt.Sprintf("%d chips at %v", s.Amount, s.At)
 }
 
-func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int) {
+func (s *SpyBlindAlerter) ScheduleAlertAt(at time.Duration, amount int, to io.Writer) {
 	s.Alerts = append(s.Alerts, ScheduledAlert{at, amount})
 }
